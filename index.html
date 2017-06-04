@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Cars - ES demo</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.min.js"></script>
+    <script src="checklist-model.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous" />
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+    <script src="app.js"></script>
+</head>
+
+<body ng-app="search-ui">
+    <div class="container-fluid" ng-controller="searchController">
+
+        <div class="row">
+            <div class="col-md-2">
+                <div style="font-weight: bold;">Refine by:</div>
+                <div ng-repeat="agg in aggregations | orderBy : 'sortOrder'" style="max-height:400px; overflow:auto;">
+                    <div class="filter-header {{agg.key}} normal" style="font-weight: bold;">
+                        {{ agg.label }}
+                    </div>
+                    <div>
+                        <div ng-repeat="bucket in agg.buckets" class="checkbox">
+                            <div>
+                                <table>
+                                    <tr>
+                                        <td><label><input type="checkbox" checklist-change="filterChanged(agg.key, bucket.key)"  checklist-model="filters[agg.key]" checklist-value="bucket.key" >{{bucket.key}}</label>                                            </td>
+                                        <td><span>&nbsp;({{bucket.doc_count | number}})<span></td>
+                              </tr>
+                           </table>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="col-md-10">
+                 <div>
+                                    Search: <input type="text" ng-model="searchText" placeholder="search by keyword" ng-change="executeSearch()"
+                                    />
+                                </div>
+               <div>
+                  <span ng-repeat="(k, agg_types) in filters"><button class="btn btn-sm btn-default" ng-click="remove(k, filter)" ng-repeat="filter in agg_types" >{{filter}} X</button>  
+                  </span>
+                            </div>
+                            <div>
+                               
+                                <div>
+                                    <ul uib-pagination total-items="total" ng-model="currentPage" ng-change="pageChanged()" max-size="7" items-per-page="limit"
+                                        class="pagination-sm" boundary-links="true" force-ellipses="true"></ul>
+                                </div>
+                                <div class="row" ng-repeat="car in cars ">
+                                    <pre>
+                                    {{ car | json }}
+                                    </pre>
+                                </div>
+                            </div>
+                            <ul uib-pagination total-items="total" ng-model="currentPage" ng-change="pageChanged()" max-size="7" items-per-page="limit"
+                                class="pagination-sm" boundary-links="true" force-ellipses="true"></ul>
+                        </div>
+                    </div>
+</body>
+
+</html>
